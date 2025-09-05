@@ -1,0 +1,44 @@
+.movie-list-container {
+  padding: 2rem;
+  background: #141414;
+  min-height: 100vh;
+  color: #fff;
+  width: 95vw;
+}
+
+.search-bar {
+  margin-bottom: 2rem;
+
+  input {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+}
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.loading-spinner, .error-message {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 2rem;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+
+  button {
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    cursor: pointer;
+  }
+}

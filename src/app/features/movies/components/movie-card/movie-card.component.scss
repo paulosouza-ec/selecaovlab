@@ -1,0 +1,41 @@
+.movie-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.movie-poster {
+  width: 100%;
+  height: auto;
+}
+
+.movie-info {
+  padding: 1rem;
+}
+
+.movie-title {
+  font-size: 1.2rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.movie-overview {
+  font-size: 0.9rem;
+  color: #666;
+  flex-grow: 1;
+}
+
+.movie-details {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: #333;
+}
