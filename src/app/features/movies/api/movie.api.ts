@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { GenreResponse, MovieResponse } from '../types/movie.type';
+import { GenreResponse, Movie, MovieResponse } from '../types/movie.type';
 
 @Injectable({
   providedIn: 'root'
@@ -42,5 +42,9 @@ export class MovieApiService {
       language: 'en-US'
     });
     return this.http.get<MovieResponse>(`${this.apiUrl}/discover/movie?${search.toString()}`);
+  }
+
+  getMovieDetails(movieId: number): Observable<Movie> {
+    return this.http.get<Movie>(`${this.apiUrl}/movie/${movieId}?api_key=${this.apiKey}`);
   }
 }
