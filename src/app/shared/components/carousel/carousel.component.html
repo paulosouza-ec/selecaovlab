@@ -32,6 +32,9 @@
             @if (isDefaultCarousel) {
               <div>
                 <h2 class="card__name">{{ item.title }}</h2>
+                @if (item.genres?.length) {
+                  <div class="card__genres">{{ (item.genres || []).join(', ') }}</div>
+                }
                 <div class="card__rating">
                   <div class="card__stars">
                     <div [style.width.%]="item.rating"></div>

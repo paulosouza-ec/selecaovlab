@@ -11,6 +11,7 @@ export interface CarouselItem {
   rating?: number;
   vote?: number;
   character?: string;
+  genres?: string[];
 }
 
 @Component({
