@@ -1,27 +1,26 @@
 <div class="movie-list-container">
-  <app-carousel
-    [title]="'Popular Movies'"
-    [items]="popularMovies"
-    [isExplore]="false"
-    [exploreLink]="'/movies/popular'"
-    [canNavigateLeft]="true"
-    [canNavigateRight]="true">
-  </app-carousel>
+  <div class="filters">
+    <input type="text" placeholder="Buscar por nome" [formControl]="searchControl" />
+    <select [formControl]="genreControl">
+      <option value="">Todos os gêneros</option>
+      @for (g of genres; track g.id) {
+        <option [value]="g.id">{{ g.name }}</option>
+      }
+    </select>
+    <input type="number" placeholder="Ano" [formControl]="yearControl" min="1900" max="2100" />
+    <select [formControl]="sortControl">
+      <option value="release_date">Ano de lançamento</option>
+      <option value="vote_average">Nota</option>
+      <option value="title">Nome (A-Z)</option>
+      <option value="runtime">Duração</option>
+      <option value="popularity">Popularidade</option>
+    </select>
+  </div>
 
   <app-carousel
-    [title]="'Top Rated Movies'"
-    [items]="topRatedMovies"
+    [title]="'Resultados'"
+    [items]="resultsItems"
     [isExplore]="false"
-    [exploreLink]="'/movies/top-rated'"
-    [canNavigateLeft]="true"
-    [canNavigateRight]="true">
-  </app-carousel>
-
-  <app-carousel
-    [title]="'Upcoming Movies'"
-    [items]="upcomingMovies"
-    [isExplore]="false"
-    [exploreLink]="'/movies/upcoming'"
     [canNavigateLeft]="true"
     [canNavigateRight]="true">
   </app-carousel>

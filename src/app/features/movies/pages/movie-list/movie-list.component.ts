@@ -5,6 +5,7 @@ import { MovieCardComponent } from '../../components/movie-card/movie-card.compo
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
 import { CarouselItem, CarouselComponent } from '@shared/components/carousel/carousel.component';
+import { Genre } from '../../types/movie.type';
 
 @Component({
   selector: 'app-movie-list',
@@ -16,50 +17,65 @@ import { CarouselItem, CarouselComponent } from '@shared/components/carousel/car
 export class MovieListComponent implements OnInit {
   facade = inject(MovieFacade);
   searchControl = new FormControl('');
+  genreControl = new FormControl('');
+  yearControl = new FormControl('');
+  sortControl = new FormControl<'release_date' | 'vote_average' | 'title' | 'runtime' | 'popularity'>('popularity');
 
-  popularMovies: CarouselItem[] = [];
-  topRatedMovies: CarouselItem[] = [];
-  upcomingMovies: CarouselItem[] = [];
-  nowPlayingMovies: CarouselItem[] = [];
+  genres: Genre[] = [];
+  resultsItems: CarouselItem[] = [];
 
   ngOnInit() {
-    this.loadMovieCategories();
-
-    this.searchControl.valueChanges.pipe(
-      startWith(''),
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(query => {
-      if (query) {
-        this.facade.searchMovies(query);
-      } else {
-        this.facade.loadPopularMovies();
-      }
-    });
-  }
-
-  private loadMovieCategories() {
-    // Load popular movies
-    this.facade.loadPopularMovies();
-
-    // For demo purposes, we'll use the same data for different categories
-    // In a real app, you'd have separate API calls for each category
+    this.facade.loadGenres();
+    this.bindControls();
+    this.facade.discover();
     this.facade.movies$.subscribe(state => {
+      this.genres = state.genres;
       if (state.movies.length > 0) {
-        const movies = state.movies.map(movie => ({
+        const genreMap = new Map(state.genres.map(g => [g.id, g.name] as const));
+        this.resultsItems = state.movies.map(movie => ({
           id: movie.id,
           title: movie.title,
           imgSrc: movie.poster_path,
           link: `/movie/${movie.id}`,
-          rating: (movie.vote_average / 10) * 100, // Convert to percentage for star rating
-          vote: movie.vote_average
+          rating: (movie.vote_average / 10) * 100,
+          vote: movie.vote_average,
+          genres: (movie.genre_ids || []).map(id => genreMap.get(id)).filter(Boolean) as string[]
         }));
-
-        this.popularMovies = movies;
-        this.topRatedMovies = movies.slice(0, 10);
-        this.upcomingMovies = movies.slice(10, 20);
-        this.nowPlayingMovies = movies.slice(20, 30);
+      } else {
+        this.resultsItems = [];
       }
+    });
+  }
+
+  private bindControls() {
+    this.searchControl.valueChanges.pipe(
+      startWith(''),
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(name => {
+      this.facade.setFilters({ name: name ?? '' });
+      // For name filter, use search API if provided
+      if (name && name.trim().length > 0) {
+        this.facade.searchMovies(name);
+      } else {
+        this.facade.discover();
+      }
+    });
+
+    this.genreControl.valueChanges.pipe(startWith('')).subscribe(genreId => {
+      const ids = genreId ? [Number(genreId)] : [];
+      this.facade.setFilters({ genreIds: ids });
+      this.facade.discover();
+    });
+
+    this.yearControl.valueChanges.pipe(startWith('')).subscribe(year => {
+      this.facade.setFilters({ year: year ?? '' });
+      this.facade.discover();
+    });
+
+    this.sortControl.valueChanges.pipe(startWith(this.sortControl.value)).subscribe(sort => {
+      this.facade.setSort((sort as any) ?? 'popularity');
+      this.facade.discover();
     });
   }
 }
