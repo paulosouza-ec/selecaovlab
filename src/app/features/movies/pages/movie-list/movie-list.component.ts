@@ -6,6 +6,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
 import { CarouselItem, CarouselComponent } from '@shared/components/carousel/carousel.component';
 import { Genre } from '../../types/movie.type';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-movie-list',
@@ -23,6 +24,8 @@ export class MovieListComponent implements OnInit {
 
   genres: Genre[] = [];
   resultsItems: CarouselItem[] = [];
+  marathonItems: CarouselItem[] = [];
+  marathonTotalText = '0h 0m';
 
   ngOnInit() {
     this.facade.loadGenres();
@@ -44,6 +47,27 @@ export class MovieListComponent implements OnInit {
       } else {
         this.resultsItems = [];
       }
+
+      // Build marathon items and total text
+      if (state.marathon.length > 0) {
+        const genreMap = new Map(state.genres.map(g => [g.id, g.name] as const));
+        this.marathonItems = state.marathon.map(movie => ({
+          id: movie.id,
+          title: movie.title,
+          imgSrc: movie.poster_path,
+          link: `/movie/${movie.id}`,
+          rating: (movie.vote_average / 10) * 100,
+          vote: movie.vote_average,
+          genres: (movie.genre_ids || []).map(id => genreMap.get(id)).filter(Boolean) as string[]
+        }));
+      } else {
+        this.marathonItems = [];
+      }
+
+      const total = state.marathonTotalMinutes || 0;
+      const hours = Math.floor(total / 60);
+      const minutes = total % 60;
+      this.marathonTotalText = `${hours}h ${minutes}m`;
     });
   }
 
@@ -54,7 +78,6 @@ export class MovieListComponent implements OnInit {
       distinctUntilChanged()
     ).subscribe(name => {
       this.facade.setFilters({ name: name ?? '' });
-      // For name filter, use search API if provided
       if (name && name.trim().length > 0) {
         this.facade.searchMovies(name);
       } else {
@@ -77,5 +100,17 @@ export class MovieListComponent implements OnInit {
       this.facade.setSort((sort as any) ?? 'popularity');
       this.facade.discover();
     });
+  }
+
+  onAddToMarathon(itemId: number) {
+    const s = this.facade.getState();
+    const movie = s.movies.find(m => m.id === itemId);
+    if (movie) {
+      this.facade.addMovieToMarathon(movie);
+    }
+  }
+
+  onRemoveFromMarathon(itemId: number) {
+    this.facade.removeMovieFromMarathon(itemId);
   }
 }

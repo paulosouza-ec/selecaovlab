@@ -22,6 +22,24 @@
     [items]="resultsItems"
     [isExplore]="false"
     [canNavigateLeft]="true"
-    [canNavigateRight]="true">
+    [canNavigateRight]="true"
+    [actionIcon]="'+'"
+    [actionAriaLabel]="'Adicionar à maratona'"
+    (actionClicked)="onAddToMarathon($event)">
   </app-carousel>
+
+  <app-carousel
+    [title]="'Lista da Maratona'"
+    [items]="marathonItems"
+    [isExplore]="false"
+    [canNavigateLeft]="true"
+    [canNavigateRight]="true"
+    [actionIcon]="'−'"
+    [actionAriaLabel]="'Remover da maratona'"
+    (actionClicked)="onRemoveFromMarathon($event)">
+  </app-carousel>
+
+  <div class="marathon-total">
+    Duração total: <strong>{{ marathonTotalText }}</strong>
+  </div>
 </div>
