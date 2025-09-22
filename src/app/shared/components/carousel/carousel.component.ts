@@ -30,9 +30,12 @@ export class CarouselComponent implements AfterViewInit {
   @Input() canNavigateRight = false;
   @Input() isDefaultCarousel = true;
   @Input() isCastCarousel = false;
+  @Input() actionIcon?: string; // e.g., '+' or '-'
+  @Input() actionAriaLabel?: string;
 
   @Output() prevSlideEvent = new EventEmitter<void>();
   @Output() nextSlideEvent = new EventEmitter<void>();
+  @Output() actionClicked = new EventEmitter<number>();
 
   @ViewChild('carouselContainer', { static: false }) carouselContainer!: ElementRef;
 
@@ -64,5 +67,11 @@ export class CarouselComponent implements AfterViewInit {
 
   getPosterUrl(imgSrc: string): string {
     return `https://image.tmdb.org/t/p/w500${imgSrc}`;
+  }
+
+  onActionClick(itemId: number, event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.actionClicked.emit(itemId);
   }
 }

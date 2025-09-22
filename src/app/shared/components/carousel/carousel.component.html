@@ -41,6 +41,11 @@
                   </div>
                   <div class="card__vote">{{ item.vote }}</div>
                 </div>
+                @if (actionIcon) {
+                  <button type="button" class="card__action" [attr.aria-label]="actionAriaLabel || 'action'" (click)="onActionClick(item.id, $event)">
+                    {{ actionIcon }}
+                  </button>
+                }
               </div>
             }
 

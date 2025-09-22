@@ -3,6 +3,7 @@ import { MovieApiService } from '../api/movie.api';
 import { MovieStateService } from '../state/movie.state';
 import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { Movie } from '../types/movie.type';
 
 @Injectable({
   providedIn: 'root'
@@ -89,5 +90,24 @@ export class MovieFacade {
         return of(null);
       })
     ).subscribe();
+  }
+
+  addMovieToMarathon(movie: Movie) {
+    if (movie.runtime != null) {
+      this.state.addToMarathon(movie);
+      return;
+    }
+    this.api.getMovieDetails(movie.id).pipe(
+      tap(full => this.state.addToMarathon({ ...movie, runtime: full.runtime })),
+      catchError(err => {
+        // Fallback with runtime 0 if details fail
+        this.state.addToMarathon({ ...movie, runtime: 0 });
+        return of(null);
+      })
+    ).subscribe();
+  }
+
+  removeMovieFromMarathon(movieId: number) {
+    this.state.removeFromMarathon(movieId);
   }
 }
