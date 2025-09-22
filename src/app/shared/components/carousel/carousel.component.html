@@ -30,7 +30,7 @@
 
             <!-- Default Carousel -->
             @if (isDefaultCarousel) {
-              <div>
+              <div class="card__content">
                 <h2 class="card__name">{{ item.title }}</h2>
                 @if (item.genres?.length) {
                   <div class="card__genres">{{ (item.genres || []).join(', ') }}</div>

@@ -17,6 +17,7 @@ export interface MovieState {
   sortBy: 'release_date' | 'vote_average' | 'title' | 'runtime' | 'popularity';
   marathon: Movie[];
   marathonTotalMinutes: number;
+  generatorMovies: Movie[];
   _internal?: unknown;
 }
 
@@ -31,6 +32,7 @@ const initialState: MovieState = {
   sortBy: 'popularity',
   marathon: [],
   marathonTotalMinutes: 0,
+  generatorMovies: [],
   _internal: undefined
 };
 
@@ -97,5 +99,9 @@ export class MovieStateService {
     const marathon = current.marathon.filter(m => m.id !== movieId);
     const marathonTotalMinutes = this.computeMarathonTotalMinutes(marathon);
     this.setState({ marathon, marathonTotalMinutes });
+  }
+
+  setGeneratorMovies(movies: Movie[]) {
+    this.setState({ generatorMovies: movies });
   }
 }

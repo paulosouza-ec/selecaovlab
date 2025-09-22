@@ -110,4 +110,49 @@ export class MovieFacade {
   removeMovieFromMarathon(movieId: number) {
     this.state.removeFromMarathon(movieId);
   }
+
+  generateByPerson(name: string, role: 'actor' | 'director' | 'any' = 'any') {
+    if (!name || name.trim().length === 0) {
+      this.state.setGeneratorMovies([]);
+      return;
+    }
+    this.state.setLoading(true);
+    this.api.searchPerson(name).pipe(
+      tap(res => {
+        const person = res.results[0];
+        if (!person) {
+          this.state.setGeneratorMovies([]);
+          this.state.setLoading(false);
+          return;
+        }
+        this.api.getPersonMovieCredits(person.id).pipe(
+          tap(credits => {
+            let movies = credits.cast;
+            if (role === 'director') {
+              movies = credits.crew.filter((m: any) => m && (m as any).job === 'Director');
+            } else if (role === 'actor') {
+              movies = credits.cast;
+            } else {
+              movies = [...credits.cast, ...credits.crew];
+            }
+            // Deduplicate by id
+            const uniqueMap = new Map<number, Movie>();
+            for (const m of movies) uniqueMap.set(m.id, m as Movie);
+            this.state.setGeneratorMovies(Array.from(uniqueMap.values()));
+            this.state.setLoading(false);
+          }),
+          catchError(err => {
+            this.state.setGeneratorMovies([]);
+            this.state.setLoading(false);
+            return of(null);
+          })
+        ).subscribe();
+      }),
+      catchError(err => {
+        this.state.setGeneratorMovies([]);
+        this.state.setLoading(false);
+        return of(null);
+      })
+    ).subscribe();
+  }
 }

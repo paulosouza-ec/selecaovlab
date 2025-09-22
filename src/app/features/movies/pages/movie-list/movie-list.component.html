@@ -1,45 +1,288 @@
 <div class="movie-list-container">
-  <div class="filters">
-    <input type="text" placeholder="Buscar por nome" [formControl]="searchControl" />
-    <select [formControl]="genreControl">
-      <option value="">Todos os gêneros</option>
-      @for (g of genres; track g.id) {
-        <option [value]="g.id">{{ g.name }}</option>
-      }
-    </select>
-    <input type="number" placeholder="Ano" [formControl]="yearControl" min="1900" max="2100" />
-    <select [formControl]="sortControl">
-      <option value="release_date">Ano de lançamento</option>
-      <option value="vote_average">Nota</option>
-      <option value="title">Nome (A-Z)</option>
-      <option value="runtime">Duração</option>
-      <option value="popularity">Popularidade</option>
-    </select>
-  </div>
+  <div class="container">
+    <!-- Header -->
+    <div class="header animate-fade-in">
+      <h1>🎬 CineTeca</h1>
+      <p class="animate-slide-in-up">Descubra filmes incríveis, crie sua maratona personalizada e explore filmografias dos seus artistas favoritos</p>
+      <div class="header-badges animate-slide-in-up">
+        <span class="badge badge--primary">✨ Premium</span>
+        <span class="badge badge--accent">🚀 Interativo</span>
+        <span class="badge badge--success">📊 Analytics</span>
+      </div>
+    </div>
 
-  <app-carousel
-    [title]="'Resultados'"
-    [items]="resultsItems"
-    [isExplore]="false"
-    [canNavigateLeft]="true"
-    [canNavigateRight]="true"
-    [actionIcon]="'+'"
-    [actionAriaLabel]="'Adicionar à maratona'"
-    (actionClicked)="onAddToMarathon($event)">
-  </app-carousel>
+    <!-- Filters Section -->
+    <div class="filters animate-fade-in">
+      <div class="form-group">
+        <label class="form-label">🔍 Buscar Filmes</label>
+        <input type="text" class="form-control" placeholder="Digite o nome do filme..." [formControl]="searchControl" />
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">🎭 Gênero</label>
+        <select class="form-control" [formControl]="genreControl">
+          <option value="">Todos os gêneros</option>
+          @for (g of genres; track g.id) {
+            <option [value]="g.id">{{ g.name }}</option>
+          }
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">📅 Ano</label>
+        <input type="number" class="form-control" placeholder="Ex: 2023" [formControl]="yearControl" min="1900" max="2100" />
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">📊 Ordenar por</label>
+        <select class="form-control" [formControl]="sortControl">
+          <option value="release_date">Ano de lançamento</option>
+          <option value="vote_average">Nota</option>
+          <option value="title">Nome (A-Z)</option>
+          <option value="runtime">Duração</option>
+          <option value="popularity">Popularidade</option>
+        </select>
+      </div>
+    </div>
 
-  <app-carousel
-    [title]="'Lista da Maratona'"
-    [items]="marathonItems"
-    [isExplore]="false"
-    [canNavigateLeft]="true"
-    [canNavigateRight]="true"
-    [actionIcon]="'−'"
-    [actionAriaLabel]="'Remover da maratona'"
-    (actionClicked)="onRemoveFromMarathon($event)">
-  </app-carousel>
+    <!-- Generator Section -->
+    <div class="generator animate-fade-in">
+      <h3>Gerador por XXX</h3>
+      <div class="generator-controls">
+        <div class="form-group">
+          <label class="form-label">Tipo</label>
+          <select class="form-control" [formControl]="generatorTypeControl">
+            <option value="any">Qualquer</option>
+            <option value="actor">Ator</option>
+            <option value="director">Diretor</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nome do Artista</label>
+          <input type="text" class="form-control" placeholder="Ex: Tom Hanks, Christopher Nolan..." [formControl]="generatorNameControl" />
+        </div>
+      </div>
+    </div>
 
-  <div class="marathon-total">
-    Duração total: <strong>{{ marathonTotalText }}</strong>
+    <!-- Results Carousel -->
+    @if (isLoading) {
+      <div class="loading-section">
+        <div class="loading-spinner"></div>
+        <p>Carregando filmes incríveis...</p>
+      </div>
+    } @else {
+      <app-carousel
+        [title]="'🎯 Resultados da Busca'"
+        [items]="resultsItems"
+        [isExplore]="false"
+        [canNavigateLeft]="true"
+        [canNavigateRight]="true"
+        [actionIcon]="'➕'"
+        [actionAriaLabel]="'Adicionar à maratona'"
+        (actionClicked)="onAddToMarathon($event)">
+      </app-carousel>
+    }
+
+    <!-- Generator Results -->
+    @if (generatorItems.length > 0) {
+      <app-carousel
+        [title]="'🎬 Filmografia'"
+        [items]="generatorItems"
+        [isExplore]="false"
+        [canNavigateLeft]="true"
+        [canNavigateRight]="true"
+        [actionIcon]="'➕'"
+        [actionAriaLabel]="'Adicionar à maratona'"
+        (actionClicked)="onAddToMarathon($event)">
+      </app-carousel>
+    }
+
+    <!-- Marathon Total & Stats -->
+    @if (marathonItems.length > 0) {
+      <div class="marathon-section animate-fade-in">
+        <div class="marathon-total">
+          <div class="marathon-total__content">
+            <div class="marathon-total__info">
+              <h3>🎪 Sua Maratona Personalizada</h3>
+              <div class="marathon-total__stats">
+                <div class="stat-item">
+                  <span class="stat-value">{{ marathonStats.totalMovies }}</span>
+                  <span class="stat-label">Filmes</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-value">{{ marathonTotalText }}</span>
+                  <span class="stat-label">Duração Total</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-value">{{ marathonStats.averageRating | number:'1.1-1' }}</span>
+                  <span class="stat-label">Nota Média</span>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-secondary" (click)="toggleStats()">
+              📊 {{ showStats ? 'Ocultar' : 'Ver' }} Estatísticas
+            </button>
+          </div>
+        </div>
+
+        <!-- Advanced Statistics Dashboard -->
+        @if (showStats) {
+          <div class="stats-dashboard animate-slide-in-up">
+            <div class="stats-grid">
+              <!-- Genre Distribution -->
+              <div class="stats-card">
+                <h4>🎭 Distribuição por Gênero</h4>
+                <div class="genre-chart">
+                  @for (genre of marathonStats.genres; track genre[0]) {
+                    <div class="genre-item">
+                      <div class="genre-info">
+                        <span class="genre-name">{{ genre[0] }}</span>
+                        <span class="genre-count">{{ genre[1] }} filmes</span>
+                      </div>
+                      <div class="progress-bar">
+                        <div class="progress-bar__fill" [style.width.%]="getGenrePercentage(genre[0])"></div>
+                      </div>
+                      <span class="genre-percentage">{{ getGenrePercentage(genre[0]) | number:'1.0-0' }}%</span>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Decade Distribution -->
+              <div class="stats-card">
+                <h4>📅 Distribuição por Década</h4>
+                <div class="decade-chart">
+                  @for (decade of marathonStats.decades; track decade[0]) {
+                    <div class="decade-item">
+                      <div class="decade-info">
+                        <span class="decade-name">{{ decade[0] }}</span>
+                        <span class="decade-count">{{ decade[1] }} filmes</span>
+                      </div>
+                      <div class="progress-bar">
+                        <div class="progress-bar__fill" [style.width.%]="getDecadePercentage(decade[0])"></div>
+                      </div>
+                      <span class="decade-percentage">{{ getDecadePercentage(decade[0]) | number:'1.0-0' }}%</span>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Top Insights -->
+              <div class="stats-card">
+                <h4>🏆 Insights da Maratona</h4>
+                <div class="insights">
+                  <div class="insight-item">
+                    <div class="insight-icon">🎯</div>
+                    <div class="insight-content">
+                      <span class="insight-label">Gênero Favorito</span>
+                      <span class="insight-value">{{ marathonStats.topGenre || 'N/A' }}</span>
+                    </div>
+                  </div>
+                  <div class="insight-item">
+                    <div class="insight-icon">⏱️</div>
+                    <div class="insight-content">
+                      <span class="insight-label">Duração Média</span>
+                      <span class="insight-value">{{ marathonStats.averageRuntime | number:'1.0-0' }} min</span>
+                    </div>
+                  </div>
+                  <div class="insight-item">
+                    <div class="insight-icon">⭐</div>
+                    <div class="insight-content">
+                      <span class="insight-label">Qualidade Média</span>
+                      <span class="insight-value">{{ marathonStats.averageRating | number:'1.1-1' }}/10</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Marathon Progress -->
+              <div class="stats-card">
+                <h4>📈 Progresso da Maratona</h4>
+                <div class="progress-visual">
+                  <div class="progress-circle">
+                    <div class="progress-circle__fill" [style.transform]="'rotate(' + (marathonStats.totalMovies * 36) + 'deg)'"></div>
+                    <div class="progress-circle__text">
+                      <span class="progress-number">{{ marathonStats.totalMovies }}</span>
+                      <span class="progress-label">Filmes</span>
+                    </div>
+                  </div>
+                  <div class="progress-info">
+                    <div class="progress-item">
+                      <span class="progress-label">Duração Total</span>
+                      <span class="progress-value">{{ marathonTotalText }}</span>
+                    </div>
+                    <div class="progress-item">
+                      <span class="progress-label">Tempo por Filme</span>
+                      <span class="progress-value">{{ marathonStats.averageRuntime | number:'1.0-0' }} min</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Marathon List -->
+    @if (marathonItems.length > 0) {
+      <app-carousel
+        [title]="'🎪 Lista da Maratona'"
+        [items]="marathonItems"
+        [isExplore]="false"
+        [canNavigateLeft]="true"
+        [canNavigateRight]="true"
+        [actionIcon]="'❌'"
+        [actionAriaLabel]="'Remover da maratona'"
+        (actionClicked)="onRemoveFromMarathon($event)">
+      </app-carousel>
+    } @else {
+      <div class="empty-marathon animate-fade-in">
+        <div class="empty-state">
+          <h3>🎬 Sua maratona está vazia</h3>
+          <p>Adicione filmes usando os botões ➕ para começar sua maratona personalizada!</p>
+        </div>
+      </div>
+    }
+
+    <!-- Professional Footer -->
+    <footer class="footer animate-fade-in">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>🎬 CineTeca</h4>
+          <p>Plataforma profissional para planejamento de maratonas cinematográficas</p>
+          <div class="tech-stack">
+            <span class="tech-badge">Angular 17</span>
+            <span class="tech-badge">TypeScript</span>
+            <span class="tech-badge">SCSS</span>
+            <span class="tech-badge">RxJS</span>
+            <span class="tech-badge">TMDB API</span>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>✨ Recursos</h4>
+          <ul>
+            <li>🔍 Busca Avançada</li>
+            <li>📊 Analytics Detalhados</li>
+            <li>🎭 Gerador Temático</li>
+            <li>⏱️ Cálculo de Duração</li>
+            <li>📱 Design Responsivo</li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>🚀 Tecnologias</h4>
+          <ul>
+            <li>State Management</li>
+            <li>Reactive Programming</li>
+            <li>Component Architecture</li>
+            <li>API Integration</li>
+            <li>Modern CSS</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 CineTeca - Desenvolvido com ❤️ para demonstrar habilidades técnicas</p>
+      </div>
+    </footer>
   </div>
 </div>
