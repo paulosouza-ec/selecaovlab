@@ -4,6 +4,7 @@ import { MovieStateService } from '../state/movie.state';
 import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Movie } from '../types/movie.type';
+import { MarathonStorageService, SavedMarathon } from './storage/marathon-storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ import { Movie } from '../types/movie.type';
 export class MovieFacade {
   private api = inject(MovieApiService);
   private state = inject(MovieStateService);
+  private storage = inject(MarathonStorageService);
 
   movies$ = this.state.movies$;
   getState = () => this.state.getState();
@@ -100,7 +102,6 @@ export class MovieFacade {
     this.api.getMovieDetails(movie.id).pipe(
       tap(full => this.state.addToMarathon({ ...movie, runtime: full.runtime })),
       catchError(err => {
-        // Fallback with runtime 0 if details fail
         this.state.addToMarathon({ ...movie, runtime: 0 });
         return of(null);
       })
@@ -155,4 +156,48 @@ export class MovieFacade {
       })
     ).subscribe();
   }
+
+  loadSavedMarathons() {
+    const saved = this.storage.getSavedMarathons();
+    this.state.setSavedMarathons(saved);
+  }
+
+  /**
+   * Saves the current marathon list to localStorage with a given name.
+   */
+  saveCurrentMarathon(name: string) {
+    const currentState = this.getState();
+    const currentMarathon = currentState.marathon;
+
+    if (currentMarathon.length === 0) {
+      alert("Sua maratona está vazia!");
+      return;
+    }
+
+    const newSavedMarathon: SavedMarathon = {
+      id: String(Date.now()), 
+      name,
+      movies: currentMarathon,
+      totalMinutes: currentState.marathonTotalMinutes,
+      createdAt: new Date(),
+    };
+
+    this.storage.saveMarathon(newSavedMarathon);
+    this.loadSavedMarathons(); 
+  }
+
+  deleteSavedMarathon(marathonId: string) {
+    if (confirm('Tem certeza que deseja excluir esta maratona?')) {
+      this.storage.deleteMarathon(marathonId);
+      this.loadSavedMarathons(); 
+    }
+  }
+
+  loadMarathonIntoCurrent(marathon: SavedMarathon) {
+    this.state.setState({
+      marathon: marathon.movies,
+      marathonTotalMinutes: marathon.totalMinutes
+    });
+  }
+  
 }

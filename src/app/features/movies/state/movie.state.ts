@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Genre, Movie } from '../types/movie.type';
+import { SavedMarathon } from '../services/storage/marathon-storage.service';
 
 export interface MovieState {
   movies: Movie[];
@@ -18,6 +19,7 @@ export interface MovieState {
   marathon: Movie[];
   marathonTotalMinutes: number;
   generatorMovies: Movie[];
+  savedMarathons: SavedMarathon[]; 
   _internal?: unknown;
 }
 
@@ -33,6 +35,7 @@ const initialState: MovieState = {
   marathon: [],
   marathonTotalMinutes: 0,
   generatorMovies: [],
+  savedMarathons: [],
   _internal: undefined
 };
 
@@ -55,6 +58,7 @@ export class MovieStateService {
   setMovies(movies: Movie[]) {
     this.setState({ movies });
   }
+
 
   setLoading(loading: boolean) {
     this.setState({ loading });
@@ -93,7 +97,6 @@ export class MovieStateService {
     const marathonTotalMinutes = this.computeMarathonTotalMinutes(marathon);
     this.setState({ marathon, marathonTotalMinutes });
   }
-
   removeFromMarathon(movieId: number) {
     const current = this.getState();
     const marathon = current.marathon.filter(m => m.id !== movieId);
@@ -104,4 +107,9 @@ export class MovieStateService {
   setGeneratorMovies(movies: Movie[]) {
     this.setState({ generatorMovies: movies });
   }
+
+  setSavedMarathons(savedMarathons: SavedMarathon[]) {
+    this.setState({ savedMarathons });
+  }
+
 }

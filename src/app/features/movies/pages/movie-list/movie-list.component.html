@@ -167,6 +167,61 @@
                 </div>
               </div>
 
+              <div id="marathon-section"> @if (marathonItems.length > 0) {
+                <div class="marathon-section animate-fade-in">
+                  <div class="marathon-total">
+                    <div class="marathon-total__content">
+                      <div class="marathon-total__info">
+                        <h3>🎪 Sua Maratona Personalizada</h3>
+                        </div>
+                      <div class="marathon-actions">
+                        <button class="btn btn-primary" (click)="onSaveMarathon()">
+                          💾 Salvar Maratona
+                        </button>
+                        <button class="btn btn-secondary" (click)="toggleStats()">
+                          📊 {{ showStats ? 'Ocultar' : 'Ver' }} Estatísticas
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+              }
+            </div>
+            
+            <div class="saved-marathons-section animate-fade-in">
+              <h2>📚 Maratonas Salvas</h2>
+              @if (savedMarathons.length > 0) {
+                <div class="saved-marathons-grid">
+                  @for (marathon of savedMarathons; track marathon.id) {
+                    <div class="saved-marathon-card">
+                      <div class="card-header">
+                        <h3 class="card-title">{{ marathon.name }}</h3>
+                        <span class="card-date">{{ marathon.createdAt | date:'short' }}</span>
+                      </div>
+                      <div class="card-body">
+                        <div class="card-stat">
+                          <span class="stat-value">{{ marathon.movies.length }}</span>
+                          <span class="stat-label">Filmes</span>
+                        </div>
+                        <div class="card-stat">
+                          <span class="stat-value">{{ formatDuration(marathon.totalMinutes) }}</span>
+                          <span class="stat-label">Duração</span>
+                        </div>
+                      </div>
+                      <div class="card-footer">
+                        <button class="btn btn-sm btn-success" (click)="onLoadSavedMarathon(marathon)">Carregar</button>
+                        <button class="btn btn-sm btn-danger" (click)="onDeleteSavedMarathon(marathon.id)">Excluir</button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <div class="empty-state">
+                  <p>Nenhuma maratona salva ainda. Salve sua lista atual para vê-la aqui!</p>
+                </div>
+              }
+            </div>
+
               <!-- Top Insights -->
               <div class="stats-card">
                 <h4>🏆 Insights da Maratona</h4>

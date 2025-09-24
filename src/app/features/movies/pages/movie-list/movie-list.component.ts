@@ -7,6 +7,7 @@ import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
 import { CarouselItem, CarouselComponent } from '@shared/components/carousel/carousel.component';
 import { Genre } from '../../types/movie.type';
 import { map } from 'rxjs/operators';
+import { SavedMarathon } from '../../services/storage/marathon-storage.service';
 
 @Component({
   selector: 'app-movie-list',
@@ -29,6 +30,7 @@ export class MovieListComponent implements OnInit {
   marathonItems: CarouselItem[] = [];
   marathonTotalText = '0h 0m';
   generatorItems: CarouselItem[] = [];
+  savedMarathons: SavedMarathon[] = [];
   
   // Advanced statistics
   marathonStats = {
@@ -39,6 +41,7 @@ export class MovieListComponent implements OnInit {
     decades: new Map<string, number>(),
     topGenre: '',
     averageRuntime: 0
+    
   };
   
   isLoading = false;
@@ -51,6 +54,7 @@ export class MovieListComponent implements OnInit {
     this.facade.movies$.subscribe(state => {
       this.isLoading = state.loading;
       this.genres = state.genres;
+      this.savedMarathons = state.savedMarathons;
       if (state.movies.length > 0) {
         const genreMap = new Map(state.genres.map(g => [g.id, g.name] as const));
         this.resultsItems = state.movies.map(movie => ({
@@ -87,10 +91,10 @@ export class MovieListComponent implements OnInit {
       const minutes = total % 60;
       this.marathonTotalText = `${hours}h ${minutes}m`;
 
-      // Calculate advanced statistics
+      
       this.calculateMarathonStats(state.marathon, state.genres);
 
-      // generator results
+      
       if (state.generatorMovies.length > 0) {
         const genreMap = new Map(state.genres.map(g => [g.id, g.name] as const));
         this.generatorItems = state.generatorMovies.map(movie => ({
@@ -166,6 +170,22 @@ export class MovieListComponent implements OnInit {
     this.facade.removeMovieFromMarathon(itemId);
   }
 
+  onSaveMarathon() {
+    const name = prompt('Digite um nome para a sua maratona:', 'Maratona de Fim de Semana');
+    if (name && name.trim().length > 0) {
+      this.facade.saveCurrentMarathon(name);
+    }
+  }
+
+  onLoadSavedMarathon(marathon: SavedMarathon) {
+    this.facade.loadMarathonIntoCurrent(marathon);
+    window.scrollTo({ top: document.getElementById('marathon-section')?.offsetTop, behavior: 'smooth' });
+  }
+
+  onDeleteSavedMarathon(marathonId: string) {
+    this.facade.deleteSavedMarathon(marathonId);
+  }
+
   private calculateMarathonStats(marathon: any[], genres: Genre[]) {
     if (marathon.length === 0) {
       this.marathonStats = {
@@ -179,6 +199,8 @@ export class MovieListComponent implements OnInit {
       };
       return;
     }
+
+    
 
     const genreMap = new Map(genres.map(g => [g.id, g.name]));
     const genreCount = new Map<string, number>();
@@ -234,4 +256,12 @@ export class MovieListComponent implements OnInit {
     const count = this.marathonStats.decades.get(decade) || 0;
     return (count / this.marathonStats.totalMovies) * 100;
   }
+
+  formatDuration(totalMinutes: number): string {
+    if (!totalMinutes) return '0h 0m';
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return `${hours}h ${minutes}m`;
+  }
+
 }

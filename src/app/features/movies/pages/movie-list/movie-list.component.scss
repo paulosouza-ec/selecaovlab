@@ -130,6 +130,8 @@
   }
 }
 
+
+
 .marathon-section {
   margin: 3rem 0;
 }
@@ -568,4 +570,157 @@
       line-height: 1.6;
     }
   }
+
+  // Styles for Marathon actions buttons
+.marathon-total__content {
+  .marathon-actions {
+    display: flex;
+    gap: 1rem;
+    @media (max-width: 768px) {
+      width: 100%;
+      justify-content: center;
+    }
+  }
 }
+
+
+// Styles for the new Saved Marathons section
+.saved-marathons-section {
+  margin-top: 4rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius-lg);
+  border-top: 2px solid var(--primary-color);
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: var(--text-primary);
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 2rem;
+  }
+}
+
+.saved-marathons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.saved-marathon-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+  box-shadow: var(--shadow-light);
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+    border-color: var(--primary-color);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-primary);
+  }
+  
+  .card-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--border-radius);
+  }
+
+  .card-body {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+  }
+
+  .card-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+  }
+
+  .card-footer {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: auto;
+  }
+}
+
+// Basic Button styles (if not globally defined)
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  
+  &-primary {
+    background-color: #e50914;
+    color: white;
+    &:hover { background-color: #f40612; }
+  }
+
+  &-secondary {
+    background-color: rgba(109, 109, 110, 0.7);
+    color: white;
+    &:hover { background-color: rgba(109, 109, 110, 0.4); }
+  }
+
+  &-success {
+    background-color: #28a745;
+    color: white;
+    &:hover { background-color: #218838; }
+  }
+
+  &-danger {
+    background-color: #dc3545;
+    color: white;
+    &:hover { background-color: #c82333; }
+  }
+
+  &-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  }
+} 
