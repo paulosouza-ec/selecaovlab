@@ -13,7 +13,15 @@ export class MovieApiService {
   private readonly apiUrl = 'https://api.themoviedb.org/3';
 
   getPopularMovies(page = 1): Observable<MovieResponse> {
-    console.log(this.apiKey)
+    console.log('API Key:', this.apiKey ? 'Configurada' : 'NÃO CONFIGURADA');
+    if (!this.apiKey || this.apiKey === 'your_tmdb_api_key_here') {
+      console.error('❌ API Key do TMDB não configurada!');
+      console.error('📝 Para configurar:');
+      console.error('1. Acesse: https://www.themoviedb.org/settings/api');
+      console.error('2. Crie uma conta gratuita');
+      console.error('3. Gere uma API key');
+      console.error('4. Substitua "your_tmdb_api_key_here" no arquivo src/environments/environment.ts');
+    }
     return this.http.get<MovieResponse>(`${this.apiUrl}/movie/popular?api_key=${this.apiKey}&page=${page}`);
   }
 

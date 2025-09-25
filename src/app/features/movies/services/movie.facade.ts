@@ -27,7 +27,14 @@ export class MovieFacade {
         this.state.setLoading(false);
       }),
       catchError(err => {
-        this.state.setError('Failed to load popular movies.');
+        console.error('❌ Erro ao carregar filmes populares:', err);
+        if (err.status === 401) {
+          this.state.setError('❌ API Key inválida. Verifique sua configuração no arquivo environment.ts');
+        } else if (err.status === 0) {
+          this.state.setError('❌ Erro de conexão. Verifique sua internet e a API key do TMDB.');
+        } else {
+          this.state.setError('❌ Falha ao carregar filmes populares. Verifique sua API key do TMDB.');
+        }
         this.state.setLoading(false);
         return of(null);
       })
