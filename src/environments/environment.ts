@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiKey: process.env['NG_APP_API_KEY']
+  apiKey: (globalThis as any).NG_APP_API_KEY || ''
 };

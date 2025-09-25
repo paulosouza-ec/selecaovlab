@@ -2,13 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { GenreResponse, Movie, MovieResponse } from '../types/movie.type';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MovieApiService {
   private http = inject(HttpClient);
-  private readonly apiKey = process.env["NG_APP_API_KEY"];
+  private readonly apiKey = environment.apiKey ?? '';
   private readonly apiUrl = 'https://api.themoviedb.org/3';
 
   getPopularMovies(page = 1): Observable<MovieResponse> {
