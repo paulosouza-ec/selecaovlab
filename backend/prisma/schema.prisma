@@ -1,0 +1,26 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  marathons Marathon[]
+}
+
+model Marathon {
+  id           String   @id @default(cuid())
+  name         String
+  movies       Json     // Armazenaremos a lista de filmes como JSON
+  totalMinutes Int
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String
+}

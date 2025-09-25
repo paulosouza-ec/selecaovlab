@@ -4,7 +4,8 @@ import { MovieStateService } from '../state/movie.state';
 import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Movie } from '../types/movie.type';
-import { MarathonStorageService, SavedMarathon } from './storage/marathon-storage.service';
+import { MarathonApiService } from './api/marathon.api.service';
+import { SavedMarathon } from './storage/marathon-storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ import { MarathonStorageService, SavedMarathon } from './storage/marathon-storag
 export class MovieFacade {
   private api = inject(MovieApiService);
   private state = inject(MovieStateService);
-  private storage = inject(MarathonStorageService);
+  private marathonApi = inject(MarathonApiService);
 
   movies$ = this.state.movies$;
   getState = () => this.state.getState();
@@ -158,8 +159,20 @@ export class MovieFacade {
   }
 
   loadSavedMarathons() {
-    const saved = this.storage.getSavedMarathons();
-    this.state.setSavedMarathons(saved);
+    this.marathonApi.getMarathons().pipe(
+      tap(marathonsFromApi => {
+        const saved = marathonsFromApi.map(m => ({
+            ...m,
+            createdAt: new Date(m.createdAt) // Converte a string de data para um objeto Date
+        }));
+        this.state.setSavedMarathons(saved as SavedMarathon[]);
+      }),
+      catchError(err => {
+        console.error('Failed to load saved marathons', err);
+        this.state.setSavedMarathons([]); // Limpa em caso de erro
+        return of(null);
+      })
+    ).subscribe();
   }
 
   /**
@@ -167,29 +180,39 @@ export class MovieFacade {
    */
   saveCurrentMarathon(name: string) {
     const currentState = this.getState();
-    const currentMarathon = currentState.marathon;
+    const { marathon: movies, marathonTotalMinutes: totalMinutes } = currentState;
 
-    if (currentMarathon.length === 0) {
+    if (movies.length === 0) {
       alert("Sua maratona está vazia!");
       return;
     }
 
-    const newSavedMarathon: SavedMarathon = {
-      id: String(Date.now()), 
-      name,
-      movies: currentMarathon,
-      totalMinutes: currentState.marathonTotalMinutes,
-      createdAt: new Date(),
-    };
+    const newMarathonData = { name, movies, totalMinutes };
 
-    this.storage.saveMarathon(newSavedMarathon);
-    this.loadSavedMarathons(); 
+    this.marathonApi.createMarathon(newMarathonData).pipe(
+      tap(() => {
+        this.loadSavedMarathons(); // Recarrega a lista do backend
+      }),
+      catchError(err => {
+        console.error('Failed to save marathon', err);
+        alert('Ocorreu um erro ao salvar sua maratona. Tente novamente.');
+        return of(null);
+      })
+    ).subscribe();
   }
 
   deleteSavedMarathon(marathonId: string) {
     if (confirm('Tem certeza que deseja excluir esta maratona?')) {
-      this.storage.deleteMarathon(marathonId);
-      this.loadSavedMarathons(); 
+      this.marathonApi.deleteMarathon(marathonId).pipe(
+        tap(() => {
+          this.loadSavedMarathons(); // Recarrega a lista do backend
+        }),
+        catchError(err => {
+          console.error('Failed to delete marathon', err);
+          alert('Ocorreu um erro ao excluir sua maratona. Tente novamente.');
+          return of(null);
+        })
+      ).subscribe();
     }
   }
 

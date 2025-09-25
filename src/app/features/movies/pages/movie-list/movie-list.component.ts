@@ -49,6 +49,7 @@ export class MovieListComponent implements OnInit {
 
   ngOnInit() {
     this.facade.loadGenres();
+    this.facade.loadSavedMarathons();
     this.bindControls();
     this.facade.discover();
     this.facade.movies$.subscribe(state => {

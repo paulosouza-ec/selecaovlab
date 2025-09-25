@@ -1,17 +1,14 @@
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced.  * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * Delete the template below * * * * * * * * * -->
-<!-- * * * * * * * to get started with your project! * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-
 <div class="app-container">
   <header class="app-header">
-    <h1 class="app-title">{{ title }}</h1>
+    <h1 class="app-title" routerLink="/movies">{{ title }}</h1>
     <nav class="app-nav">
-      <a routerLink="/movies" routerLinkActive="active" class="nav-link">Movies</a>
+      @if (isLoggedIn) {
+        <a routerLink="/movies" routerLinkActive="active" class="nav-link">Minhas Maratonas</a>
+        <button (click)="logout()" class="nav-link-button">Sair</button>
+      } @else {
+        <a routerLink="/login" routerLinkActive="active" class="nav-link">Login</a>
+        <a routerLink="/register" routerLinkActive="active" class="nav-link">Cadastrar</a>
+      }
     </nav>
   </header>
 
@@ -19,10 +16,3 @@
     <router-outlet></router-outlet>
   </main>
 </div>
-
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content above * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced.  * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * End of Placeholder  * * * * * * * * * * * * -->

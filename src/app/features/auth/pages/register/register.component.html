@@ -1,0 +1,58 @@
+
+<div class="auth-container">
+    <h2>Criar Conta</h2>
+    <p class="subtitle">Junte-se ao CineTeca e comece a criar suas maratonas!</p>
+  
+    <form #registerForm="ngForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="seu@email.com"
+          [(ngModel)]="email"
+          required
+          email
+          #emailInput="ngModel"
+        >
+        @if (emailInput.invalid && (emailInput.dirty || emailInput.touched)) {
+          <div class="validation-error">
+            <small>Por favor, insira um email válido.</small>
+          </div>
+        }
+      </div>
+  
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Pelo menos 6 caracteres"
+          [(ngModel)]="password"
+          required
+          minlength="6"
+          #passwordInput="ngModel"
+        >
+        @if (passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)) {
+          <div class="validation-error">
+            <small>A senha deve ter no mínimo 6 caracteres.</small>
+          </div>
+        }
+      </div>
+  
+      <button type="submit" [disabled]="registerForm.invalid">Cadastrar</button>
+    </form>
+  
+    @if (success) {
+      <div class="message success-message">{{ success }}</div>
+    }
+    @if (error) {
+      <div class="message error-message">{{ error }}</div>
+    }
+  
+    <p class="redirect-link">
+      Já tem uma conta? <a routerLink="/login">Faça o login</a>
+    </p>
+  </div>
