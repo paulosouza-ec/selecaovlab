@@ -13,52 +13,49 @@
 
     <!-- Filters Section -->
     <div class="filters animate-fade-in">
-      <div class="form-group">
-        <label class="form-label">🔍 Buscar Filmes</label>
-        <input type="text" class="form-control" placeholder="Digite o nome do filme..." [formControl]="searchControl" />
-      </div>
-      
-      <div class="form-group">
-        <label class="form-label">🎭 Gênero</label>
-        <select class="form-control" [formControl]="genreControl">
-          <option value="">Todos os gêneros</option>
-          @for (g of genres; track g.id) {
-            <option [value]="g.id">{{ g.name }}</option>
-          }
-        </select>
-      </div>
-      
-      <div class="form-group">
-        <label class="form-label">📅 Ano</label>
-        <input type="number" class="form-control" placeholder="Ex: 2023" [formControl]="yearControl" min="1900" max="2100" />
-      </div>
-      
-      <div class="form-group">
-        <label class="form-label">📊 Ordenar por</label>
-        <select class="form-control" [formControl]="sortControl">
-          <option value="release_date">Ano de lançamento</option>
-          <option value="vote_average">Nota</option>
-          <option value="title">Nome (A-Z)</option>
-          <option value="runtime">Duração</option>
-          <option value="popularity">Popularidade</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Generator Section -->
-    <div class="generator animate-fade-in">
-      <h3>Gerador por XXX</h3>
-      <div class="generator-controls">
+      <div class="filters-grid">
         <div class="form-group">
-          <label class="form-label">Tipo</label>
-          <select class="form-control" [formControl]="generatorTypeControl">
+          <label class="form-label">🔍 Buscar Filmes</label>
+          <input type="text" class="form-control" placeholder="Digite o nome do filme..." [formControl]="searchControl" />
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">🎭 Gênero</label>
+          <select class="form-control form-select" [formControl]="genreControl">
+            <option value="">Todos os gêneros</option>
+            @for (g of genres; track g.id) {
+              <option [value]="g.id">{{ g.name }}</option>
+            }
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">📅 Ano</label>
+          <input type="number" class="form-control" placeholder="Ex: 2023" [formControl]="yearControl" min="1900" max="2100" />
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">📊 Ordenar por</label>
+          <select class="form-control form-select" [formControl]="sortControl">
+            <option value="release_date">Ano de lançamento</option>
+            <option value="vote_average">Nota</option>
+            <option value="title">Nome (A-Z)</option>
+            <option value="runtime">Duração</option>
+            <option value="popularity">Popularidade</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">🎬 Gerador por Artista</label>
+          <select class="form-control form-select" [formControl]="generatorTypeControl">
             <option value="any">Qualquer</option>
             <option value="actor">Ator</option>
             <option value="director">Diretor</option>
           </select>
         </div>
+        
         <div class="form-group">
-          <label class="form-label">Nome do Artista</label>
+          <label class="form-label">👤 Nome do Artista</label>
           <input type="text" class="form-control" placeholder="Ex: Tom Hanks, Christopher Nolan..." [formControl]="generatorNameControl" />
         </div>
       </div>
