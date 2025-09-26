@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common'; // Importe CommonModule
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'Filmes';
+  title = 'CineTeca';
 
   // Injete os serviços
   private authService = inject(AuthService);
