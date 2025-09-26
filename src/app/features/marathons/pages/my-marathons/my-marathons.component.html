@@ -1,0 +1,149 @@
+<div class="my-marathons-container">
+  <div class="header">
+    <h1>Minhas Maratonas</h1>
+    <button class="refresh-btn" (click)="loadMarathons()" [disabled]="loading">
+      <i class="icon-refresh"></i>
+      Atualizar
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Carregando maratonas...</p>
+    </div>
+  } @else if (error) {
+    <div class="error">
+      <p>{{ error }}</p>
+      <button (click)="loadMarathons()" class="retry-btn">Tentar novamente</button>
+    </div>
+  } @else if (marathons.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">🎬</div>
+      <h2>Nenhuma maratona encontrada</h2>
+      <p>Crie sua primeira maratona de filmes!</p>
+    </div>
+  } @else {
+    <div class="marathons-grid">
+      @for (marathon of marathons; track marathon.id) {
+        <div class="marathon-card">
+          <div class="marathon-header">
+            <h3>{{ marathon.name }}</h3>
+            <div class="marathon-actions">
+              <button class="edit-btn" (click)="startEdit(marathon)">
+                <i class="icon-edit"></i>
+                Editar
+              </button>
+              <button class="delete-btn" (click)="confirmDelete(marathon)">
+                <i class="icon-trash"></i>
+                Excluir
+              </button>
+            </div>
+          </div>
+          
+          <div class="marathon-info">
+            <div class="info-item">
+              <span class="label">Filmes:</span>
+              <span class="value">{{ Array.isArray(marathon.movies) ? marathon.movies.length : 0 }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Duração:</span>
+              <span class="value">{{ formatDuration(marathon.totalMinutes) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Criada em:</span>
+              <span class="value">{{ marathon.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+
+          @if (Array.isArray(marathon.movies) && marathon.movies.length > 0) {
+            <div class="movies-preview">
+              <h4>Filmes da Maratona:</h4>
+              <div class="movies-list">
+                @for (movie of marathon.movies; track $index) {
+                  <div class="movie-item">
+                    <span class="movie-title">{{ movie.title || movie.name }}</span>
+                    <span class="movie-duration">{{ formatDuration(movie.runtime || 0) }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Modal de Edição -->
+  @if (editingMarathon) {
+    <div class="modal-overlay" (click)="cancelEdit()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Editar Maratona</h2>
+          <button class="close-btn" (click)="cancelEdit()">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="editName">Nome da Maratona:</label>
+            <input 
+              type="text" 
+              id="editName" 
+              [(ngModel)]="editName" 
+              placeholder="Digite o nome da maratona"
+              class="form-input"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Filmes da Maratona:</label>
+            <div class="movies-edit-list">
+              @for (movie of editMovies; track $index) {
+                <div class="movie-edit-item">
+                  <div class="movie-info">
+                    <span class="movie-title">{{ movie.title || movie.name }}</span>
+                    <span class="movie-duration">{{ formatDuration(movie.runtime || 0) }}</span>
+                  </div>
+                  <button class="remove-movie-btn" (click)="removeMovieFromEdit($index)">
+                    <i class="icon-trash"></i>
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="cancel-btn" (click)="cancelEdit()">Cancelar</button>
+          <button class="save-btn" (click)="saveEdit()" [disabled]="!editName.trim()">
+            Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal de Confirmação de Exclusão -->
+  @if (deletingMarathon) {
+    <div class="modal-overlay" (click)="cancelDelete()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Confirmar Exclusão</h2>
+          <button class="close-btn" (click)="cancelDelete()">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+          <p>Tem certeza que deseja excluir a maratona <strong>"{{ deletingMarathon.name }}"</strong>?</p>
+          <p class="warning">Esta ação não pode ser desfeita.</p>
+        </div>
+
+        <div class="modal-footer">
+          <button class="cancel-btn" (click)="cancelDelete()">Cancelar</button>
+          <button class="delete-btn" (click)="deleteMarathon()">
+            Excluir
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

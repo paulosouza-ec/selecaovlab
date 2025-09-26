@@ -13,9 +13,13 @@ export const routes: Routes = [
   },
   {
     path: 'movies',
-  loadChildren: () => import('./features/movies/movies.routes').then(m => m.MOVIE_ROUTES),
-  canActivate: [authGuard] // Protegendo a rota
-
+    loadChildren: () => import('./features/movies/movies.routes').then(m => m.MOVIE_ROUTES),
+    canActivate: [authGuard] // Protegendo a rota
+  },
+  {
+    path: 'marathons',
+    loadChildren: () => import('./features/marathons/marathons.routes').then(m => m.MARATHON_ROUTES),
+    canActivate: [authGuard] // Protegendo a rota
   },
   {
     path: '',

@@ -3,7 +3,7 @@
     <h1 class="app-title" routerLink="/movies">{{ title }}</h1>
     <nav class="app-nav">
       @if (isLoggedIn) {
-        <a routerLink="/movies" routerLinkActive="active" class="nav-link">Minhas Maratonas</a>
+        <a routerLink="/marathons" routerLinkActive="active" class="nav-link">Minhas Maratonas</a>
         <button (click)="logout()" class="nav-link-button">Sair</button>
       } @else {
         <a routerLink="/login" routerLinkActive="active" class="nav-link">Login</a>

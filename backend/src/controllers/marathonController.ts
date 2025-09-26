@@ -25,6 +25,25 @@ export const createMarathon = async (req: AuthRequest, res: Response) => {
     res.status(201).json(marathon);
 };
 
+export const updateMarathon = async (req: AuthRequest, res: Response) => {
+    const { id } = req.params;
+    const { name, movies, totalMinutes } = req.body;
+    
+    try {
+        const marathon = await prisma.marathon.update({
+            where: { id: id, userId: req.userId },
+            data: {
+                name,
+                movies,
+                totalMinutes,
+            },
+        });
+        res.json(marathon);
+    } catch (error) {
+        res.status(404).json({ message: 'Marathon not found' });
+    }
+};
+
 export const deleteMarathon = async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
     try {
