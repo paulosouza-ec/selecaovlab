@@ -110,6 +110,32 @@ p {
   }
 }
 
+.nav-link-button {
+  background: #2a1a1a;
+  border: 1px solid #ff4444;
+  color: #ff6666;
+  text-decoration: none;
+  margin-right: 1rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  font-size: inherit;
+
+  &:hover {
+    background: #3a1a1a;
+    border-color: #ff6666;
+    color: #ff8888;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
 .app-main {
   flex: 1;
   display: flex;
@@ -230,22 +256,5 @@ p {
     margin-block: 1.5rem;
   }
 
-  .nav-link-button {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-  
-    &:hover {
-      color: #ff6b6b;
-      background: rgba(255, 107, 107, 0.1);
-    }
-  }
   
 }
