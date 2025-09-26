@@ -12,7 +12,7 @@ Uma aplicação web moderna para descobrir filmes, criar maratonas personalizada
 - **Angular Router** - Roteamento
 - **Angular Forms** - Formulários reativos
 
-### Backendfde
+### Backend
 - **Node.js** - Runtime JavaScript
 - **Express.js 5.1.0** - Framework web
 - **TypeScript** - Linguagem de programação
