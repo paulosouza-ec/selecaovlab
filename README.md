@@ -12,7 +12,7 @@ Uma aplicação web moderna para descobrir filmes, criar maratonas personalizada
 - **Angular Router** - Roteamento
 - **Angular Forms** - Formulários reativos
 
-### Backend
+### Backendfde
 - **Node.js** - Runtime JavaScript
 - **Express.js 5.1.0** - Framework web
 - **TypeScript** - Linguagem de programação
@@ -241,7 +241,7 @@ npx prisma studio
 - **Formulários**: Validação em tempo real
 - **Modais**: Overlay com animações
 
-## 🚀 Deploy
+## 🚀 Deploy (Ainda não implementado)
 
 ### Frontend (Vercel/Netlify)
 ```bash
